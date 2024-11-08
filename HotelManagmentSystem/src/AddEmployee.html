@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Employee</title>
+    <style>
+        /* Reset and general styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Wrapper to hold form and image */
+        .main-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Left sidebar form */
+        .form-container {
+            width: 50%;
+            padding: 40px;
+            background-color: #f4f4f9;
+            overflow-y: auto;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #555;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .gender-container {
+            display: flex;
+            align-items: center; /* Center the items vertically */
+        }
+
+        .gender-options {
+            display: flex; /* Aligns items in a row */
+            gap: 20px; /* Adds spacing between the options */
+            margin-left: 10px; /* Aligns with the label */
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #successMessage {
+            margin-top: 20px;
+            color: green;
+            text-align: center;
+        }
+
+        /* Right image container */
+        .image-container {
+            width: 50%;
+            background: url("icons/tenth.jpg") no-repeat center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <!-- Left Form Container -->
+    <div class="form-container">
+        <h2>Add Employee Details</h2>
+        <form id="employeeForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" min="18" required>
+
+            <label>Gender:</label>
+            <div class="gender-container">
+                <div class="gender-options">
+                    <label for="male">
+                        <input type="radio" id="male" name="gender" value="male" required>
+                        Male
+                    </label>
+                    <label for="female">
+                        <input type="radio" id="female" name="gender" value="female" required>
+                        Female
+                    </label>
+                </div>
+            </div>
+
+            <label for="job">Job:</label>
+            <select id="job" name="job">
+                <option value="Front Desk Clerks">Front Desk Clerks</option>
+                <option value="Porters">Porters</option>
+                <option value="Housekeeping">Housekeeping</option>
+                <option value="Kitchen Staff">Kitchen Staff</option>
+                <option value="Room Service">Room Service</option>
+                <option value="Waiter/Waitress">Waiter/Waitress</option>
+                <option value="Manager">Manager</option>
+                <option value="Accountant">Accountant</option>
+                <option value="Chef">Chef</option>
+            </select>
+
+            <label for="salary">Salary:</label>
+            <input type="number" id="salary" name="salary" min="0" required>
+
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
+
+            <label for="aadhar">Aadhar:</label>
+            <input type="text" id="aadhar" name="aadhar" pattern="[0-9]{12}" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <button type="submit">Save</button>
+        </form>
+
+        <div id="successMessage" class="hidden">Employee added successfully!</div>
+    </div>
+
+    <!-- Right Image Container -->
+    <div class="image-container">
+        <!-- Image background handled with CSS -->
+    </div>
+</div>
+
+<script>
+    // JavaScript for form handling
+    document.getElementById("employeeForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // Get form values
+        const name = document.getElementById("name").value;
+        const age = document.getElementById("age").value;
+        const gender = document.querySelector('input[name="gender"]:checked').value;
+        const job = document.getElementById("job").value;
+        const salary = document.getElementById("salary").value;
+        const phone = document.getElementById("phone").value;
+        const aadhar = document.getElementById("aadhar").value;
+        const email = document.getElementById("email").value;
+
+        // Payload for backend
+        const employeeData = { name, age, gender, job, salary, phone, aadhar, email };
+
+        // Send data to backend using Fetch API (replace 'your-backend-url' with actual endpoint)
+        fetch("http://localhost:3060/addEmployee", {  // replace with your actual endpoint
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(employeeData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("successMessage").classList.remove("hidden");
+                document.getElementById("employeeForm").reset();
+            } else {
+                alert("Error: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while adding the employee.");
+        });
+    });
+</script>
+
+</body>
+</html>
